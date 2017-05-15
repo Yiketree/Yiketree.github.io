@@ -1,0 +1,140 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Raytracing| MaYingyin</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <!-- modernizr enables HTML5 elements and feature detects -->
+  <script type="text/javascript" src="js/modernizr-1.5.min.js"></script>
+</head>
+
+<body>
+  <div id="main">
+    <header>
+      <div id="logo"><h1>MaYingyin<a href="#">'s&amp;Homepage</a></h1></div>
+      <nav>
+        <ul class="lavaLampWithImage" id="lava_menu">
+          <li class="current"><a href="index.html">HOME</a></li>
+		  <li><a href="aboutme.html">ABOUT ME</a></li>
+		  <li><a href="portfolio.html">PORTFOLIO</a></li>
+          <li><a href="blog.html">BLOG</a></li>
+        </ul>
+      </nav>
+    </header>
+
+      <div id="sidebar_container">
+        <div class="sidebar">
+          <h3></br></br></br></br></br>Latest BLOG</h3>
+          <h5>May 15th, 2017</h5>
+          <p>2017 sees the redesign of my life. Let me think.<br /><a href="blog.html">Read more</a></p>
+        </div>
+        <div class="sidebar">
+          <h3></br></br></br>Useful Links</h3>
+          <ul>
+            <li><a href="http://www.cs.sdu.edu.cn/~baoquan/course/S17_CG.html">Graphics Course</a></li>
+            <li><a href="http://www.sdu.edu.cn/">SDU Link</a></li>
+          </ul>
+        </div>
+      </div>
+	  
+      <div id="content">
+        <h1>CG experiment Ⅱ: Ray tracing </h1>
+        <h2>Experiment introduction:</h2>
+		<p>Here comes the new project.This project may be a little difficult.You have 2 choices:<br />
+		1:Based on last project:Let's your sitck man move<br />
+		2:Create your own scene,you can place anything in it<br />
+		Choose one and use at least two different method such as Phong model, Gouraud model to complete this project.<br />
+		</p>
+  
+		
+		<h2>demo:</h2>
+		<p>
+        <span class="center"><img src="images/m1.jpg" alt=" graphic 1" /></span>
+		<br /><br />
+        <span class="center"><img src="images/m2.jpg" alt="graphic 2" /></span>
+		</p>
+		
+
+		<h2>detail:</h2>
+<p>This is my second CG project ray tracing written in C++, demonstrating a recursive ray tracing algorithm for rendering a scene. </p>
+
+<p>The ray tracing algorithm works by a series of rays — representing light rays, albeit in reverse — from a given viewpoint through an image plane in a scene. When one of those rays hits an object in the scene, the color of the object at that point is used as the color of the image plane pixel the ray passed through on its way. In the project here are two models: gouraud and phong model, which combines ambient, diffuse and specular lighting components.The color is typically determined by the model.
+</p>
+
+<p>
+This is implemented in the following code, which can be added to the raytracer right after the loop that calculates the diffuse illumination per light source.
+</p>
+<p>
+float</font> refl = prim-&gt;GetMaterial()-&gt;GetReflection();<br />
+if(refl &gt; 0.0f)
+{<br />
+	vector3 N = prim-&gt;GetNormal( pi );<br />
+	vector3 R = a_Ray.GetDirection() - 2.0f * DOT( a_Ray.GetDirection(), N ) * N;<br />
+	if (a_Depth &lt; TRACEDEPTH) <br />
+	{<br />
+		Color rcol( 0, 0, 0 );<br />
+		float dist;<br />
+		Raytrace( Ray( pi + R * EPSILON, R ), rcol, a_Depth + 1, a_RIndex, dist );<br />
+		a_Acc += refl * rcol * prim-&gt;GetMaterial()-&gt;GetColor();<br />
+	}<br />
+}<br />
+<p>
+A material can have some diffuse shading, and some specular shading; and we can set the size of the highlight by tweaking the power.It's not quite right though.
+
+The diffuse shading is OK: A diffuse material scatters light in all directions, and so its brightest spit is exactly there where the material faces the light source. Taking the dot product between the normal and a vector to the light gives this result.
+
+Specular shading is a bit different: Basically, the specular highlight is a diffuse reflection of the light source. 
+<br/>Phong suggested the following lighting model, that indeed takes the reflected vector into account:<br/>
+
+    intensity = diffuse * (L.N) + specular * (V.R)n<br/>
+(where L is the vector from the intersection point to the light source, N is the plane normal, V is the view direction and R is L reflected in the surface)<br/>
+
+Notice that this formula covers both diffuse and specular lighting.<br/>
+The code that implements this is shown below:<br/>
+<br /><br />
+vector3 V = a_Ray.GetDirection();<br/>
+vector3 R = L - 2.0f * DOT( L, N ) * N;<br/>
+
+float dot = DOT( V, R );<br/>
+if (dot > 0)<br/>
+{<br/>
+	float spec = powf( dot, 20 ) * prim->GetMaterial()->GetSpecular() * shade;<br/>
+	// 添加镜面光照<br/>
+	a_Acc += spec * light->GetMaterial()->GetColor();<br/>
+} <br/>
+<br/>
+After adding this to the lighting calculation, the raytracer produces an image like the second one above，which is quite a great improvement
+</p>
+</p>
+</p>
+        <h2>Other project</h2>
+        <ul>
+          <li><a href="Stickman.html">Stickman</a></li>
+          <li><a href="ex3.html">Assignment Ⅲ</a></li>
+        </ul>
+	<footer>
+      <p><a href="index.html">home</a> | <a href="aboutme.html">about me</a> | <a href="portfolio.html">my portfolio</a> | <a href="blog.html">blog</a></p>
+      <p>&copy; 2017 MaYingyin. </p> 
+    </footer>
+      </div>
+    </div>
+  </div>
+  <!-- javascript at the bottom for fast page loading -->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.min.js"></script>
+  <script type="text/javascript" src="js/jquery.lavalamp.min.js"></script>
+  <script type="text/javascript" src="js/image_fade.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      $("#lava_menu").lavaLamp({
+        fx: "backout",
+        speed: 700
+      });
+    });
+  </script>
+<div style="display:none"><script src='http://v7.cnzz.com/stat.php?id=155540&web_id=155540' language='JavaScript' charset='gb2312'></script></div>
+</body>
+</html>

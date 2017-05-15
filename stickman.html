@@ -1,0 +1,119 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title>Stickman| MaYingyin</title>
+  <meta name="description" content="website description" />
+  <meta name="keywords" content="website keywords, website keywords" />
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+  <!-- modernizr enables HTML5 elements and feature detects -->
+  <script type="text/javascript" src="js/modernizr-1.5.min.js"></script>
+</head>
+
+<body>
+  <div id="main">
+    <header>
+      <div id="logo"><h1>MaYingyin<a href="#">'s&amp;Homepage</a></h1></div>
+      <nav>
+        <ul class="lavaLampWithImage" id="lava_menu">
+          <li class="current"><a href="index.html">HOME</a></li>
+		  <li><a href="aboutme.html">ABOUT ME</a></li>
+		  <li><a href="portfolio.html">PORTFOLIO</a></li>
+          <li><a href="blog.html">BLOG</a></li>
+        </ul>
+      </nav>
+    </header>
+
+      <div id="sidebar_container">
+        <div class="sidebar">
+          <h3></br></br></br></br></br>Latest BLOG</h3>
+          <h5>May 15th, 2017</h5>
+          <p>2017 sees the redesign of my life. Let me think.<br /><a href="blog.html">Read more</a></p>
+        </div>
+        <div class="sidebar">
+          <h3></br></br></br>Useful Links</h3>
+          <ul>
+            <li><a href="http://www.cs.sdu.edu.cn/~baoquan/course/S17_CG.html">Graphics Course</a></li>
+            <li><a href="http://www.sdu.edu.cn/">SDU Link</a></li>
+          </ul>
+        </div>
+      </div>
+	  
+      <div id="content">
+        <h1>CG experimentⅠ: Let's move your stick man </h1>
+        <h2>Experiment introduction:</h2>
+		<p>Simulate a stick man and make it walk like a real man, based on C++ & openGL.<br /></p>
+        <p>options:<br />s: stand<br />w: walk forward<br />b: walk back<br /></p>
+		<h2>demo:</h2>
+		<p>
+		<embed src='http://player.youku.com/player.php/sid/XMjY5MTU2MDAwMA==/v.swf' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash'></embed>
+		<br /><br />
+		<h2>detail:</h2>
+<div>I drew the robot use square and sphere. To animate the robot,
+I used some function to be assigned via keyword actions. I added
+rotation and translation effect for the motion in animated
+robot.For every part of the robot, the program will calculate the
+co-ordinate and draw it over and over again.</DIV>
+<div>
+<div>//画右腿</DIV>
+<div>glPushMatrix();</DIV>
+<div>glTranslatef(moveX, 0.0, moveZ);
+&nbsp;<wbr>//平移原点（0，0，0）个距离</DIV>
+<div>glRotatef(180, 0.0, 1.0, 0.0); &nbsp;<wbr></DIV>
+<div>glTranslatef(0.325, 0.0, 0.0);&nbsp;<wbr></DIV>
+<div>glRotatef(swingRight, 1.0, 0.0, 0.0);</DIV>
+<div>//下调坐标系画右大腿</DIV>
+<div>glTranslatef(0.0, -0.6, 0.0);</DIV>
+<div>glColor3f(1.0, 1.0, 1.0);</DIV>
+<div>//画右大腿</DIV>
+<div>glPushMatrix();</DIV>
+<div>glScalef(0.4, 1.0, 0.4);
+&nbsp;<wbr>//模型缩放，机器人的大腿是一个0.4*1*0.4的立方体</DIV>
+<div>glutSolidCube(1);</DIV>
+<div>glPopMatrix();</DIV>
+<div><br /></DIV>
+<div>glTranslatef(0.0, -0.5, 0.0);</DIV>
+<div>glRotatef(swingSmall, 1.0, 0.0, 0.0);</DIV>
+<div>glTranslatef(0.0, -0.5, 0.0);</DIV>
+<div>glColor3f(1.0, 1.0, 1.0);</DIV>
+<div>//画右小腿</DIV>
+<div>glPushMatrix();</DIV>
+<div>glScalef(0.3, 1.0, 0.3);</DIV>
+<div>glutSolidCube(1.0);</DIV>
+<div>glPopMatrix();</DIV>
+<div>glPopMatrix();</DIV></p>
+
+<p>
+以上是画机器人其中一个部位的代码，整个机器人由头部、躯干、两个手臂（分为上臂和瞎臂）、两条腿（分为大腿和小腿）组成，
+关节衔接处的旋转效果由glRotatef函数实现，然后只需用函数控制好旋转的方向和角度以及频率就可以做出较为逼真的动画效果。
+</p>
+		
+        <h2>Other project</h2>
+        <ul>
+          <li><a href="Raytracing.html">Ray tracing</a></li>
+          <li><a href="ex3.html">Assignment Ⅲ</a></li>
+        </ul>
+	<footer>
+      <p><a href="index.html">home</a> | <a href="aboutme.html">about me</a> | <a href="portfolio.html">my portfolio</a> | <a href="blog.html">blog</a></p>
+      <p>&copy; 2017 MaYingyin. </p> 
+    </footer>
+      </div>
+    </div>
+  </div>
+  <!-- javascript at the bottom for fast page loading -->
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.min.js"></script>
+  <script type="text/javascript" src="js/jquery.lavalamp.min.js"></script>
+  <script type="text/javascript" src="js/image_fade.js"></script>
+  <script type="text/javascript">
+    $(function() {
+      $("#lava_menu").lavaLamp({
+        fx: "backout",
+        speed: 700
+      });
+    });
+  </script>
+<div style="display:none"><script src='http://v7.cnzz.com/stat.php?id=155540&web_id=155540' language='JavaScript' charset='gb2312'></script></div>
+</body>
+</html>
