@@ -2,7 +2,7 @@
 <html>
 
 <head>
-  <title>Home | MaYingyin</title>
+  <title>Final Project| MaYingyin</title>
   <meta name="description" content="website description" />
   <meta name="keywords" content="website keywords, website keywords" />
   <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
@@ -24,45 +24,64 @@
         </ul>
       </nav>
     </header>
-    <div id="site_content">
-      <ul class="slideshow">
-        <li class="show"><img width="950" height="350" src="images/1.jpg" alt="&quot;1 &quot;" /></li>
-        <li><img width="950" height="350" src="images/2.jpg" alt="&quot;2 &quot;" /></li>
-        <li><img width="950" height="350" src="images/3.jpg" alt="&quot;3 &quot;" /></li>
-      </ul>
+
       <div id="sidebar_container">
         <div class="sidebar">
-          <h3>Latest BLOG</h3>
+          <h3></br></br></br></br></br>Latest BLOG</h3>
           <h5>May 15th, 2017</h5>
           <p>2017 sees the redesign of my life. Let me think.<br /><a href="blog.html">Read more</a></p>
         </div>
         <div class="sidebar">
-          <h3>Useful Links</h3>
+          <h3></br></br></br>Useful Links</h3>
           <ul>
             <li><a href="http://www.cs.sdu.edu.cn/~baoquan/course/S17_CG.html">Graphics Course</a></li>
             <li><a href="http://www.sdu.edu.cn/">SDU Link</a></li>
           </ul>
         </div>
       </div>
+	  
       <div id="content">
-        <h1>I see computer graphic</h1>
-        <p>I'm taking CG course this semester. In my eye, Computer graphic is a difficult but charming course. Thanks to the course, I'm able to make some beautiful scene on my own.</p>
-        <p>You can click <a href="portfolio.html">here</a> .  All of the projects were displayed - go as you wish.</p>
-        <h2>Recent project</h2>
-        <p>My rencent projects are listed as follow:</p>
-        <ul>
-          <li><a href="stickman.html">Stick man</a></li>
-          <li><a href="Raytracing.html">Ray tracing</a></li>
-          <li><a href="ex3.html">Final raytracing</a></li>
-          <li>more...</li>
+        <h1>CG experiment Ⅲ: Final project——Ray tracing </h1>
+		
+		<h2>demo:</h2>
+		<br /><br />
+        <span class="center"><img width=400px height=400px src="images/ex3.jpg" alt="graphic 2" /></span>
+		</p><br /><br />
+		
 
+		<h2>detail:</h2>
+<p>
+My simple ray tracer written in C++ & openGL demonstrates a recursive ray tracing algorithm for rendering a scene made up of 3D primitives 
+(spheres and planes in this case). This method stands in contrast to traditional rasterization-based approaches which are typically supported
+by accelerated graphics hardware. 
+</p>
+<p>
+Ray tracing works by firing a series of rays — representing light rays, albeit in reverse — from a given viewpoint through an image plane 
+in a 3D scene. When one of these rays hits an object in the scene, the colour of the object at that point is used as the colour of the 
+image plane pixel the ray passed through on its journey. This colour is typically determined using the Phong shading model, which combines 
+ambient, diffuse and specular lighting components.
+</p>
+<p>
+More advanced effects such as reflection and refraction can be simulated by recursively tracing additional rays, originating at the point 
+of the previous intersection, and checking those rays for collisions with other objects. The number of these sequential “bounces” is usually
+limited to some fixed number in order to avoid an infinite loop (not to mention that it becomes difficult to see any noticeable impact on 
+visual quality after a given recursive depth).
+</p>
+<div>
+
+</div>
+</p>
+        <h2>Other project</h2>
+        <ul>
+          <li><a href="Stickman.html">Stickman</a></li>
+          <li><a href="Raytracing.html">Raytracing</a></li>
         </ul>
-      </div>
-    </div>
-    <footer>
+	<footer>
       <p><a href="index.html">home</a> | <a href="aboutme.html">about me</a> | <a href="portfolio.html">my portfolio</a> | <a href="blog.html">blog</a></p>
       <p>&copy; 2017 MaYingyin. </p> 
     </footer>
+      </div>
+    </div>
   </div>
   <!-- javascript at the bottom for fast page loading -->
   <script type="text/javascript" src="js/jquery.min.js"></script>

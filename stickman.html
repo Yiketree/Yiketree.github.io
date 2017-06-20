@@ -46,6 +46,7 @@
 		<p>Simulate a stick man and make it walk like a real man, based on C++ & openGL.<br /></p>
         <p>options:<br />s: stand<br />w: walk forward<br />b: walk back<br /></p>
 		<h2>demo:</h2>
+		<br />如无法打开视频请点击链接：<br /><a href="http://v.youku.com/v_show/id_XMjY5MTU2MDAwMA==.html?spm=a2h3j.8428770.3416059.1">http://v.youku.com/v_show/id_XMjY5MTU2MDAwMA==.html?spm=a2h3j.8428770.3416059.1</a>
 		<p>
 		<embed src='http://player.youku.com/player.php/sid/XMjY5MTU2MDAwMA==/v.swf' allowFullScreen='true' quality='high' width='480' height='400' align='middle' allowScriptAccess='always' type='application/x-shockwave-flash'></embed>
 		<br /><br />
@@ -54,8 +55,38 @@
 I used some function to be assigned via keyword actions. I added
 rotation and translation effect for the motion in animated
 robot.For every part of the robot, the program will calculate the
-co-ordinate and draw it over and over again.</DIV>
+co-ordinate and draw it over and over again.<br /></DIV>
+<div>First,the robot is divided into several parts:head,hip,two legs(each has two parts),two arms(each has two parts).Second,hierarchies 
+are a vital tool for modeling and animation.I used the body as root,thus head,legs,and arms are its children.And the forearm is the 
+child of its upper arm.Third,Control for each joint angle, plus global position and orientation,Recursive algorithm that descends model tree,
+ doing transformations, pushing, popping, and drawing.<br /><br />
+The Recursive algorithm:<br />
+-load the identity matrix<br />
+-for each internal node:<br />
+-push a new matrix onto the stack<br />
+-concatenate transformations onto current transformation matrix<br />
+-recursively descend tree<br />
+-pop matrix off of stack<br />
+-for each leaf node:<br />
+-draw the geometric primitive using the current transformation matrix<br />
+<br />
+Relevant OpenGL routines:<br />
+-glPushMatrix(), glPopMatrix()<br />
+	push and pop the stack. push leaves a copy of the current matrix on top of the stack<br />
+-glLoadIdentity(), glLoadMatrixd(M) <br />
+	load the Identity matrix, or an arbitrary matrix, onto top of the stack<br />
+-glMultMatrixd(M)<br />
+	multiply the matrix C on top of stack by M.  C = CM<br />
+-glOrtho (x0,y0,x1,y1,z0,z1)<br />
+	set up parallel projection matrix<br />
+-glRotatef(theta,x,y,z), glRotated(…)<br />
+	axis/angle rotate. “f” and “d” take floats and doubles, respectively  <br />
+-glTranslatef(x,y,z), glScalef(x,y,z)<br />
+	translate, rotate. <br />
+<br /><br />
+</div>
 <div>
+<div>Part of code:</DIV>
 <div>//画右腿</DIV>
 <div>glPushMatrix();</DIV>
 <div>glTranslatef(moveX, 0.0, moveZ);
@@ -84,15 +115,24 @@ co-ordinate and draw it over and over again.</DIV>
 <div>glPopMatrix();</DIV>
 <div>glPopMatrix();</DIV></p>
 
-<p>
-以上是画机器人其中一个部位的代码，整个机器人由头部、躯干、两个手臂（分为上臂和瞎臂）、两条腿（分为大腿和小腿）组成，
-关节衔接处的旋转效果由glRotatef函数实现，然后只需用函数控制好旋转的方向和角度以及频率就可以做出较为逼真的动画效果。
-</p>
+<h2>conclusion:</h2>
+<DIV>
+这次实验是画一个火柴人，能实现基本的运动和对应关节弯曲。整个机器人由头部、躯干、两个手臂（分为上臂和下臂）、两条腿（分为大腿和小腿）组成，
+实验的关键在于构建一个树形结构，即“牵一发而动全身”，每个部位的对应动作和设定都
+与它的父节点相关。我选择了上半部分驱赶作为根节点，在该绘制函数中递归调用画头的函数和画两条腿的函数以及画两个手臂的函数，
+在画大腿的函数中调用画小腿的函数，在画上臂的函数中调用画小臂的函数。通过递归的调用身体各个部分的绘图函数，来完成stick man的绘制。
+关于如何让火柴人运动起来，只要确定每一帧下火柴人的位置，不断重绘场景，那么火柴人就等于运动起来了。此处由一个时间函数times控制，不断调用绘图
+函数完成场景的绘制。重复这个过程，看上去就是一个运动的火柴人。
+</DIV>
+<div>由于借助了openG库，关节的活动和火柴人移动的实现相对比较简单，坐标系的移动由glTranslatef实现，
+关节旋转效果由glRotatef函数实现，只需用控制好函数中的旋转的方向和角度即可。难点在于开始时如何构建树形层次结构，这样可以大大简化工作。通过本次实验，
+我对openGL有了初步的了解，学会了使用一些函数，对图形学的坐标变换、旋转等概念也有了比较清晰的理解。
+</div>
 		
         <h2>Other project</h2>
         <ul>
           <li><a href="Raytracing.html">Ray tracing</a></li>
-          <li><a href="ex3.html">Assignment Ⅲ</a></li>
+          <li><a href="ex3.html">Final project-raytracing</a></li>
         </ul>
 	<footer>
       <p><a href="index.html">home</a> | <a href="aboutme.html">about me</a> | <a href="portfolio.html">my portfolio</a> | <a href="blog.html">blog</a></p>

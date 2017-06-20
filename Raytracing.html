@@ -43,77 +43,195 @@
       <div id="content">
         <h1>CG experiment Ⅱ: Ray tracing </h1>
         <h2>Experiment introduction:</h2>
-		<p>Here comes the new project.This project may be a little difficult.You have 2 choices:<br />
+		<div><br />Here comes the new project.This project may be a little difficult.You have 2 choices:<br />
 		1:Based on last project:Let's your sitck man move<br />
 		2:Create your own scene,you can place anything in it<br />
-		Choose one and use at least two different method such as Phong model, Gouraud model to complete this project.<br />
-		</p>
+		Choose one and use at least two different method such as Phong model, Gouraud model to complete this project.<br /><br /><br /><br />
+		</div>
   
 		
 		<h2>demo:</h2>
-		<p>
-        <span class="center"><img src="images/m1.jpg" alt=" graphic 1" /></span>
 		<br /><br />
         <span class="center"><img src="images/m2.jpg" alt="graphic 2" /></span>
-		</p>
+		</p><br /><br />
 		
 
 		<h2>detail:</h2>
-<p>This is my second CG project ray tracing written in C++, demonstrating a recursive ray tracing algorithm for rendering a scene. </p>
+<div>
+<h3>Phong光照模型</h3>
 
-<p>The ray tracing algorithm works by a series of rays — representing light rays, albeit in reverse — from a given viewpoint through an image plane in a scene. When one of those rays hits an object in the scene, the color of the object at that point is used as the color of the image plane pixel the ray passed through on its way. In the project here are two models: gouraud and phong model, which combines ambient, diffuse and specular lighting components.The color is typically determined by the model.
-</p>
+<div>Phong模型是最常用的局部光照模型，此模型把从表面的光分解为3个独立项：</div>
+<ul>
+<div>环境项：模拟场景的整体光照水平。</div>
+<div>漫反射：模拟直接光源在表面均匀地向各个方向反射。</div>
+<div>镜面反射：在光滑表面均匀反射的高光。</div>
+</ul>
+<br />
+<div>先来看一下phong光照模型的数学公式（单个光源）：</div>
+<blockquote>
+<br /><div>I = Ka * LA + LL * Kd * max( ( dot (N，L),0 ) + LL * Ks* max (dot ( R,V )^,shininess,0 ）</div><br />
+</blockquote>
+<div>从公式可以看出，计算表面上某点的phong反射时需要输入一些参数，这些参数包括：</div>
+<ul>
+<ul>
+<div>-环境反射量Ka</div>
+<div>-漫反射量kd</div>
+<div>-镜面反射量Ks</div>
+<div>-镜面光滑度shininess</div>
+</ul>
+<div>此处可以用物体材质结构来描述：</div>
+<pre><code>struct Matrial
+{
+    float ka ;
+    float kd ;
+    float ks ;
+    float shininess;
+}</code></pre>
 
-<p>
-This is implemented in the following code, which can be added to the raytracer right after the loop that calculates the diffuse illumination per light source.
-</p>
-<p>
-float</font> refl = prim-&gt;GetMaterial()-&gt;GetReflection();<br />
-if(refl &gt; 0.0f)
-{<br />
-	vector3 N = prim-&gt;GetNormal( pi );<br />
-	vector3 R = a_Ray.GetDirection() - 2.0f * DOT( a_Ray.GetDirection(), N ) * N;<br />
-	if (a_Depth &lt; TRACEDEPTH) <br />
-	{<br />
-		Color rcol( 0, 0, 0 );<br />
-		float dist;<br />
-		Raytrace( Ray( pi + R * EPSILON, R ), rcol, a_Depth + 1, a_RIndex, dist );<br />
-		a_Acc += refl * rcol * prim-&gt;GetMaterial()-&gt;GetColor();<br />
-	}<br />
-}<br />
-<p>
-A material can have some diffuse shading, and some specular shading; and we can set the size of the highlight by tweaking the power.It's not quite right though.
+</ul>
+<div>有关向量可以参考下面的图。图中的H向量在这里并没有用到，它是另一个光照模型Blina-Phong中的一个向量。</div>
+<p><img src="http://images2015.cnblogs.com/blog/610439/201602/610439-20160215014118236-1512806062.png" /></p>
+</br>
+<div>L:从表面上某点（受到光照的那点）指向光源的方向向量</div>
+<div>V:从表面上某点指向摄像机的方向向量</div>
+<div>N:表面上某点的法向量</div>
+<div>R:L关于N的反射向量</div>
+</br>
+<div>其中R向量的计算方法为：</div>
+<div>任何向量都可以表示为切线向量和法线向量之和，例如对于向量L，它可以表示为：</div>
+<blockquote>
+<div>L = Ln + Lt ;</div>
+</blockquote>
+<div>Ln指的是L在法线向量N上的投影长度，它可以这样计算：</div>
+<blockquote>
+<div>Ln = dot ( N, L )N ; (N是个单位向量)</div>
+</blockquote>
+<div>Ln计算出来了，自然的，Lt可以由L与Ln来计算：</div>
+<blockquote>
+<div>Lt = L - Ln;</div>
+</blockquote>
+<div>对于R向量，它是向量L关于法向量N的反射向量，故R与L有同一个法线分量Ln，但又相反的切线分量Lt，因此，我们可以这样求R：</div>
+<blockquote>
+<div>R = Rn + Rt</div>
+<div>= Ln - Lt</div>
+<div>= Ln - （L- Ln）</div>
+<div>= 2Ln - L</div>
+<div>= 2( dot ( N , L )N ) - L</div>
+</blockquote>
+<div></br>依据公式，phong光照模型的CG代码可以编写如下：</div>
+<pre><code>        struct Matrial
+        {
+            float ka ;  //环境反射量
+            float kd ;  //漫反射量
+            float ks ;  //镜面反射量
+            float shininess;    //物体表面光泽度
+        }
+        struct Light 
+        {
+            float3 position ; //灯光的位置
+            float3 color ;    //灯光的颜色
+        }
+        void PhongModle (
+                        out float3 oposition:POSITION, 
+                        out float3 color :COLOR,
+                        
+                        float4 position:POSITION,
+                        float3 normal:NORMAL,
+                        
+                        uniform float4x4 modelViewPrij,
+                        uniform float3 globalAmbient ,
+                        uniform float3 eyePosition,
+                        uniform Light light ,
+                        uniform Material material,
+                        
+                        )
+        {
+            oposition = mul (modelViewPrij,P);
+            
+            float3 P = position.xyz;
+            float3 N = normal;
+            
+            //计算环境光贡献
+            float3 ambient = material.ka * globalAmbient;
+            //计算向量L
+            float3 L = normalize( light.position -P );
+            //计算向量V
+            float3 V = normalize (eyePosition -P)；
+            //计算向量R
+            float3 R =  2 * (dot (N,L)*N )-L ;
+            //计算漫反射贡献
+            float3 diffuse = material.kd * light.color  *　max (dot (N,L),0);
+            //计算镜面反射贡献
+            float3 specular = material.ks * light.color * max (dot (R,V)^shininess,0);
+            
+            //三种光加和
+            color.xyz = ambient + diffuse +specular ;
+            color .w = 1;
+            
+        }</code></pre>
 
-The diffuse shading is OK: A diffuse material scatters light in all directions, and so its brightest spit is exactly there where the material faces the light source. Taking the dot product between the normal and a vector to the light gives this result.
+<h3>Lambert光照模型</h3>
+<div>Lambert光照模型是最简单的漫反射模型。物体发生理想漫反射时，光线照射到比较粗糙的物体表面，从物体表面向各个方向发生了反射，
+从而无论从哪个角度来看表面，表面某点的明暗程度都不随观测者的位置变化而变化。例如你观察黑板时,
+黑板上发生的就是漫反射。</div>
+<div>Lambert光照模型的数学表达式可以写为：</div>
+<blockquote>
+<p>Ip = Ia * kd + II * kd * ( dot ( N,L ) )</p>
+</blockquote>
+<div>其中：</div>
+<ol>
+<li>kd为物体表面的漫反射系数。</li>
+<li>Ia为环境光，Ia*kd为环境光对物体表面漫反射所贡献的光照。</li>
+<li>II表示环境光外其他光如方向光或点光源。</li>
+<li>N为物体表面p点的法向量。</li>
+<li>L为P点指向灯源的方向向量。</li>
+</ol>
+<div>Lambert光照模型的CG代码为：</div>
+<pre><code>//灯光
+struct Light 
+{
+    float3 color ;
+    float3 position;
+}
+//物体
+struct Material
+{
+    float kd ;
+}
+void LambertModel(
+                out float4 oposition:POSITION,
+                out float3 color :COLOR,
+                loat4 position:POSITION,
+                float3 normal:NORMAL,
+                
+                uniform float4x4 modelViewPrij,
+                uniform float3 globalAmbient ,
+                uniform float3 eyePosition,
+                uniform Light light ,
+                uniform Material material,
+                )
+{
 
-Specular shading is a bit different: Basically, the specular highlight is a diffuse reflection of the light source. 
-<br/>Phong suggested the following lighting model, that indeed takes the reflected vector into account:<br/>
+    oposition = mul (modelViewPrij,P);
+    float3 P = position.xyz;
+    float3 N = normal;
+    
+    float3 ambient = material.kd * globalAmbient;
+    
+    float3 L = normalize( light.position -P );
+    float3 specular = light.color * material.kd * max( dot(N,L),0 ) ;
+    
+    color.xyz = ambient + specular ;
+    color.w = 1;
 
-    intensity = diffuse * (L.N) + specular * (V.R)n<br/>
-(where L is the vector from the intersection point to the light source, N is the plane normal, V is the view direction and R is L reflected in the surface)<br/>
+}</code></pre>
+</div>
 
-Notice that this formula covers both diffuse and specular lighting.<br/>
-The code that implements this is shown below:<br/>
-<br /><br />
-vector3 V = a_Ray.GetDirection();<br/>
-vector3 R = L - 2.0f * DOT( L, N ) * N;<br/>
-
-float dot = DOT( V, R );<br/>
-if (dot > 0)<br/>
-{<br/>
-	float spec = powf( dot, 20 ) * prim->GetMaterial()->GetSpecular() * shade;<br/>
-	// 添加镜面光照<br/>
-	a_Acc += spec * light->GetMaterial()->GetColor();<br/>
-} <br/>
-<br/>
-After adding this to the lighting calculation, the raytracer produces an image like the second one above，which is quite a great improvement
-</p>
-</p>
 </p>
         <h2>Other project</h2>
         <ul>
           <li><a href="Stickman.html">Stickman</a></li>
-          <li><a href="ex3.html">Assignment Ⅲ</a></li>
+          <li><a href="ex3.html">Final project-raytracing</a></li>
         </ul>
 	<footer>
       <p><a href="index.html">home</a> | <a href="aboutme.html">about me</a> | <a href="portfolio.html">my portfolio</a> | <a href="blog.html">blog</a></p>
